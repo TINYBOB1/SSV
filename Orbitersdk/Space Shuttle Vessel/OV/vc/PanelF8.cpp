@@ -474,6 +474,43 @@ namespace vc {
 		STS()->AddAnimationComponent(anim_needle_apu_egt, 0, 1, mgr_needle_apu_egt);
 		STS()->AddAnimationComponent(anim_needle_apu_fuel_press, 0, 1, mgr_needle_apu_fuel_press);
 		STS()->AddAnimationComponent(anim_needle_apu_oil_temp, 0, 1, mgr_needle_apu_oil_temp);
+
+		//HSI
+                //Compass Card
+		static UINT compass_card[1] = { 58 };
+		mgr_compass_card = new MGROUP_ROTATE(GetVCMeshIndex(), compass_card, 1, _V(0.61764, 2.060758, 14.703392), _V(0.000000, -0.258858, 0.965914), (float)(RAD * 360));
+		anim_compass_card = STS()->CreateAnimation(0.0);
+		ach_compass_card = STS()->AddAnimationComponent(anim_compass_card, 0, 1, mgr_compass_card);
+
+		//Course Pointer
+		static UINT course_pointer[4] = { 59, 60, 62, 63 };
+		mgr_course_pointer = new MGROUP_ROTATE(GetVCMeshIndex(), course_pointer, 4, _V(0.61764, 2.060758, 14.703392), _V(0.000000, -0.258858, 0.965914), (float)(RAD * 360));
+		anim_course_pointer = STS()->CreateAnimation(0.0);
+		ach_course_pointer = STS()->AddAnimationComponent(anim_course_pointer, 0, 1, mgr_course_pointer);
+
+		//CDI
+		static UINT hsi_cdi[1] = { 61 };
+		mgr_hsi_cdi = new MGROUP_TRANSLATE(GetVCMeshIndex(), hsi_cdi, 1, _V(-0.015733, 0.0, 0.0) * 2);
+		anim_hsi_cdi = STS()->CreateAnimation(0.5);
+		ach_hsi_cdi = STS()->AddAnimationComponent(anim_hsi_cdi, 0, 1, mgr_hsi_cdi, ach_course_pointer);
+
+		//Primary Bearing
+		static UINT primary_bearing[2] = { 68, 72 };
+		mgr_primary_bearing = new MGROUP_ROTATE(GetVCMeshIndex(), primary_bearing, 2, _V(0.61764, 2.060758, 14.703392), _V(0.000000, 0.258858, -0.965914), (float)(RAD * 360));
+		anim_primary_bearing = STS()->CreateAnimation(0.0);
+		STS()->AddAnimationComponent(anim_primary_bearing, 0, 1, mgr_primary_bearing);
+
+		//Secondary Bearing
+		static UINT secondary_bearing[2] = { 69, 71 };
+		mgr_secondary_bearing = new MGROUP_ROTATE(GetVCMeshIndex(), secondary_bearing, 2, _V(0.61764, 2.060758, 14.703392), _V(0.000000, 0.258858, -0.965914), (float)(RAD * 360));
+		anim_secondary_bearing = STS()->CreateAnimation(0.0);
+		STS()->AddAnimationComponent(anim_secondary_bearing, 0, 1, mgr_secondary_bearing);
+
+		//GS Needle
+		static UINT needle_gs[1] = { 102 };
+		mgr_needle_gs = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_gs, 1, _V(0.0, -0.022808, -0.006334) * 2);
+		anim_needle_gs = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_gs, 0, 1, mgr_needle_gs);
 	}
 
 	void PanelF8::OnPreStep(double simt, double simdt, double mjd)
@@ -795,7 +832,34 @@ namespace vc {
 			for (int i = 0; i < 3; i++) if (OilIn[i] > 500.0) OilIn[i] = 500.0;
 			STS()->SetAnimation(anim_needle_apu_oil_temp, OilIn[0] / 500.0);
 
-			//sprintf(oapiDebugString(), "Fu_Press:%i", Fu_Press[0]);
+			//HSI
+                        //Compass Card
+			double hsiheading, roll, deviation, bearing, course, scale, primaryBearing, secondaryBearing, gsiDeviation;
+			course = STS()->GetYaw();
+			hsiheading = STS()->GetYaw() - pPLT1->GetIDP()->GetTargetHeading();
+			roll = STS()->GetBank();
+			bearing = pPLT1->GetIDP()->GetSelectedRunwayHeading() * RAD;
+			deviation = pPLT1->GetIDP()->GetCourseDeviation() * RAD;
+			scale = pPLT1->GetIDP()->GetCourseDeviationScale();
+			primaryBearing = pPLT1->GetIDP()->GetPrimaryBearing() * RAD;
+			secondaryBearing = pPLT1->GetIDP()->GetSecondaryBearing() * RAD;
+			gsiDeviation = pPLT1->GetIDP()->GetGlideSlopeDeviation();
+
+			double sgn = sign((90 * RAD) - fabs(roll));
+
+			double coursePointer = course - bearing;
+			if (coursePointer >= PI2) coursePointer -= PI2;
+			if (coursePointer < 0) coursePointer += PI2;
+
+			//if (deviation >= PI2) deviation -= PI2;
+			//if (deviation < 0) deviation += PI2;
+
+			STS()->SetAnimation(anim_compass_card, (hsiheading * sgn) / PI2);
+			STS()->SetAnimation(anim_course_pointer, (coursePointer) / PI2);
+			STS()->SetAnimation(anim_hsi_cdi, 0.5 + deviation / (2.0 * scale * RAD));
+			STS()->SetAnimation(anim_primary_bearing, primaryBearing / PI2);
+			STS()->SetAnimation(anim_secondary_bearing, secondaryBearing / PI2);
+			STS()->SetAnimation(anim_needle_gs, (5000.0 - gsiDeviation) / 10000.0);
 		}
 	}
 

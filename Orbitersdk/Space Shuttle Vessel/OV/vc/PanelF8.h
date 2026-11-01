@@ -148,6 +148,11 @@ namespace vc
 		UINT anim_needle_apu_egt = -1, anim_needle_apu_fuel_press = -1, anim_needle_apu_oil_temp = -1;
 		MGROUP_TRANSFORM* mgr_needle_apu_egt = nullptr, * mgr_needle_apu_fuel_press = nullptr, * mgr_needle_apu_oil_temp = nullptr;
 
+		//HSI
+		UINT anim_compass_card = -1, anim_course_pointer = -1, anim_hsi_cdi = -1, anim_primary_bearing = -1, anim_secondary_bearing = -1, anim_needle_gs = -1;
+		MGROUP_TRANSFORM* mgr_compass_card = nullptr, * mgr_hsi_cdi = nullptr, * mgr_course_pointer = nullptr, * mgr_primary_bearing = nullptr, * mgr_secondary_bearing = nullptr, * mgr_needle_gs = nullptr;
+		ANIMATIONCOMPONENT_HANDLE ach_compass_card = nullptr, ach_hsi_cdi = nullptr, ach_course_pointer = nullptr;
+
 		bool bHasMEDS = false;
 
 	};

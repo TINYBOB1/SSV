@@ -283,8 +283,10 @@ namespace vc {
 			pRDRALTM->SetReference(_V(-0.771385, 1.99079, 14.6858), _V(1, 0, 0));
 			pRDRALTM->SetMouseRegion(AID_F6, 0.324223f, 0.622842f, 0.371621f, 0.797419f);
 		}
-
-		DefineVCAnimations();
+		else
+		{
+			DefineVCAnimations();
+		}
 
 		return;
 	}
@@ -413,80 +415,114 @@ namespace vc {
 
 	void PanelF6::DefineVCAnimations()
 	{
-		if (!bHasMEDS)
-		{
-			//CDR ADI Animation defs
-			// Panel tilt
-			const double P1_3_TILT = 15.52 * RAD;
-			// Constants
-			const VECTOR3 fdairollaxis = { -0.00, sin(P1_3_TILT), -cos(P1_3_TILT) };
-			const VECTOR3 fdaiyawvaxis = { -0.00, sin(P1_3_TILT + (90.0 * RAD)), -cos(P1_3_TILT + (90.0 * RAD)) };
-			const VECTOR3 needlexvector = { 0.00, 0.05 * cos(P1_3_TILT), 0.05 * sin(P1_3_TILT) };
-			const VECTOR3 needleyvector = { 0.05, 0, 0 };
-			const VECTOR3 ratexvector = { 0.00, 0.064 * cos(P1_3_TILT), 0.064 * sin(P1_3_TILT) };
-			const VECTOR3 rateyvector = { 0.064, 0, 0 };
-			const VECTOR3 FDAI_PIVOT_L = { -0.617523, 2.212802, 14.805983 }; // L FDAI Pivot Point
+		//CDR ADI Animation defs
+		// Panel tilt
+		const double P1_3_TILT = 15.52 * RAD;
+		// Constants
+		const VECTOR3 fdairollaxis = { -0.00, sin(P1_3_TILT), -cos(P1_3_TILT) };
+		const VECTOR3 fdaiyawvaxis = { -0.00, sin(P1_3_TILT + (90.0 * RAD)), -cos(P1_3_TILT + (90.0 * RAD)) };
+		const VECTOR3 needlexvector = { 0.00, 0.05 * cos(P1_3_TILT), 0.05 * sin(P1_3_TILT) };
+		const VECTOR3 needleyvector = { 0.05, 0, 0 };
+		const VECTOR3 ratexvector = { 0.00, 0.064 * cos(P1_3_TILT), 0.064 * sin(P1_3_TILT) };
+		const VECTOR3 rateyvector = { 0.064, 0, 0 };
+		const VECTOR3 FDAI_PIVOT_L = { -0.617523, 2.212802, 14.805983 }; // L FDAI Pivot Point
 
-			//CDR ADI Ball
-			static UINT meshgroup_Fdai1_L = { 44 }; // Roll gimbal meshgroup (includes roll indicator)
-			static UINT meshgroup_Fdai2_L = { 45 };  // Pitch gimbal meshgroup (visible ball)
-			static UINT meshgroup_Fdai3_L = { 46 }; // Yaw gimbal meshgroup
-			static MGROUP_ROTATE mgt_FDAIRoll_L(GetVCMeshIndex(), &meshgroup_Fdai1_L, 1, FDAI_PIVOT_L, fdairollaxis, (float)(RAD * 360));
-			static MGROUP_ROTATE mgt_FDAIPitch_L(GetVCMeshIndex(), &meshgroup_Fdai2_L, 1, FDAI_PIVOT_L, _V(-1, 0, 0), (float)(RAD * 360));
-			static MGROUP_ROTATE mgt_FDAIYaw_L(GetVCMeshIndex(), &meshgroup_Fdai3_L, 1, FDAI_PIVOT_L, fdaiyawvaxis, (float)(RAD * 360));
-			anim_adiR = STS()->CreateAnimation(0.0);
-			anim_adiP = STS()->CreateAnimation(0.0);
-			anim_adiY = STS()->CreateAnimation(0.0);
-			ach_ADIroll = STS()->AddAnimationComponent(anim_adiR, 0.0f, 1.0f, &mgt_FDAIRoll_L);
-			ach_ADIyaw = STS()->AddAnimationComponent(anim_adiY, 0.0f, 1.0f, &mgt_FDAIYaw_L, ach_ADIroll);
-			ach_ADIpitch = STS()->AddAnimationComponent(anim_adiP, 0.0f, 1.0f, &mgt_FDAIPitch_L, ach_ADIyaw);
+		//CDR ADI Ball
+		static UINT meshgroup_Fdai1_L = { 44 }; // Roll gimbal meshgroup (includes roll indicator)
+		static UINT meshgroup_Fdai2_L = { 45 };  // Pitch gimbal meshgroup (visible ball)
+		static UINT meshgroup_Fdai3_L = { 46 }; // Yaw gimbal meshgroup
+		static MGROUP_ROTATE mgt_FDAIRoll_L(GetVCMeshIndex(), &meshgroup_Fdai1_L, 1, FDAI_PIVOT_L, fdairollaxis, (float)(RAD * 360));
+		static MGROUP_ROTATE mgt_FDAIPitch_L(GetVCMeshIndex(), &meshgroup_Fdai2_L, 1, FDAI_PIVOT_L, _V(-1, 0, 0), (float)(RAD * 360));
+		static MGROUP_ROTATE mgt_FDAIYaw_L(GetVCMeshIndex(), &meshgroup_Fdai3_L, 1, FDAI_PIVOT_L, fdaiyawvaxis, (float)(RAD * 360));
+		anim_adiR = STS()->CreateAnimation(0.0);
+		anim_adiP = STS()->CreateAnimation(0.0);
+		anim_adiY = STS()->CreateAnimation(0.0);
+		ach_ADIroll = STS()->AddAnimationComponent(anim_adiR, 0.0f, 1.0f, &mgt_FDAIRoll_L);
+		ach_ADIyaw = STS()->AddAnimationComponent(anim_adiY, 0.0f, 1.0f, &mgt_FDAIYaw_L, ach_ADIroll);
+		ach_ADIpitch = STS()->AddAnimationComponent(anim_adiP, 0.0f, 1.0f, &mgt_FDAIPitch_L, ach_ADIyaw);
 
-			//CDR ADI Rate needles
-			static UINT needle_RollRateCDR_group[1] = { 51 };
-			static UINT needle_PitchRateCDR_group[1] = { 50 };
-			static UINT needle_YawRateCDR_group[1] = { 52 };
-			mgr_needle_RollRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_RollRateCDR_group, 1, _V(0.030845, 0, 0) * 2);
-			mgr_needle_PitchRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_PitchRateCDR_group, 1, _V(0, -0.029832, -0.008284) * 2);
-			mgr_needle_YawRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_YawRateCDR_group, 1, _V(0.030845, 0, 0) * 2);
+		//CDR ADI Rate needles
+		static UINT needle_RollRateCDR_group[1] = { 51 };
+		static UINT needle_PitchRateCDR_group[1] = { 50 };
+		static UINT needle_YawRateCDR_group[1] = { 52 };
+		mgr_needle_RollRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_RollRateCDR_group, 1, _V(0.030845, 0, 0) * 2);
+		mgr_needle_PitchRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_PitchRateCDR_group, 1, _V(0, -0.029832, -0.008284) * 2);
+		mgr_needle_YawRateCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_YawRateCDR_group, 1, _V(0.030845, 0, 0) * 2);
 
-			anim_needle_RollRateCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_RollRateCDR, 0, 1, mgr_needle_RollRateCDR);
+		anim_needle_RollRateCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_RollRateCDR, 0, 1, mgr_needle_RollRateCDR);
 
-			anim_needle_PitchRateCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_PitchRateCDR, 0, 1, mgr_needle_PitchRateCDR);
+		anim_needle_PitchRateCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_PitchRateCDR, 0, 1, mgr_needle_PitchRateCDR);
 
-			anim_needle_YawRateCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_YawRateCDR, 0, 1, mgr_needle_YawRateCDR);
+		anim_needle_YawRateCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_YawRateCDR, 0, 1, mgr_needle_YawRateCDR);
 
-			//CDR ADI Error needles
-			static UINT needle_RollErrorCDR_group[1] = { 53 };
-			static UINT needle_PitchErrorCDR_group[1] = { 49 };
-			static UINT needle_YawErrorCDR_group[1] = { 54 };
-			mgr_needle_RollErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_RollErrorCDR_group, 1, _V(-0.021349, 0, 0) * 2);
-			mgr_needle_PitchErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_PitchErrorCDR_group, 1, _V(0, 0.020215, 0.005614) * 2);
-			mgr_needle_YawErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_YawErrorCDR_group, 1, _V(-0.021349, 0, 0) * 2);
+		//CDR ADI Error needles
+		static UINT needle_RollErrorCDR_group[1] = { 53 };
+		static UINT needle_PitchErrorCDR_group[1] = { 49 };
+		static UINT needle_YawErrorCDR_group[1] = { 54 };
+		mgr_needle_RollErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_RollErrorCDR_group, 1, _V(-0.021349, 0, 0) * 2);
+		mgr_needle_PitchErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_PitchErrorCDR_group, 1, _V(0, 0.020215, 0.005614) * 2);
+		mgr_needle_YawErrorCDR = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_YawErrorCDR_group, 1, _V(-0.021349, 0, 0) * 2);
 
-			anim_needle_RollErrorCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_RollErrorCDR, 0, 1, mgr_needle_RollErrorCDR);
+		anim_needle_RollErrorCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_RollErrorCDR, 0, 1, mgr_needle_RollErrorCDR);
 
-			anim_needle_PitchErrorCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_PitchErrorCDR, 0, 1, mgr_needle_PitchErrorCDR);
+		anim_needle_PitchErrorCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_PitchErrorCDR, 0, 1, mgr_needle_PitchErrorCDR);
 
-			anim_needle_YawErrorCDR = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_YawErrorCDR, 0, 1, mgr_needle_YawErrorCDR);
+		anim_needle_YawErrorCDR = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_YawErrorCDR, 0, 1, mgr_needle_YawErrorCDR);
 
-			//Alpha needle
-			static UINT needle_alpha[1] = { 85 };
-			mgr_needle_alpha = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_alpha, 1, _V(0, 0.096221, 0.025155));
-			anim_needle_alpha = STS()->CreateAnimation(0.0);
-			STS()->AddAnimationComponent(anim_needle_alpha, 0, 1, mgr_needle_alpha);
+		//Alpha needle
+		static UINT needle_alpha[1] = { 85 };
+		mgr_needle_alpha = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_alpha, 1, _V(0, 0.096221, 0.025155));
+		anim_needle_alpha = STS()->CreateAnimation(0.0);
+		STS()->AddAnimationComponent(anim_needle_alpha, 0, 1, mgr_needle_alpha);
 
-			//Alt needle
-			static UINT needle_alt[1] = { 87 };
-			mgr_needle_alt = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_alt, 1, _V(0, 0.04019, 0.01067) * 2);
-			anim_needle_alt = STS()->CreateAnimation(0.5);
-			STS()->AddAnimationComponent(anim_needle_alt, 0, 1, mgr_needle_alt);
-		}
+		//Alt needle
+		static UINT needle_alt[1] = { 87 };
+		mgr_needle_alt = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_alt, 1, _V(0, 0.04019, 0.01067) * 2);
+		anim_needle_alt = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_alt, 0, 1, mgr_needle_alt);
+
+		//HSI
+		//Compass Card
+		static UINT compass_card[1] = { 58};
+		mgr_compass_card = new MGROUP_ROTATE(GetVCMeshIndex(), compass_card, 1, _V(-0.617860, 2.060758, 14.703392), _V(0.000000, -0.258858, 0.965914), (float)(RAD * 360));
+		anim_compass_card = STS()->CreateAnimation(0.0);
+		ach_compass_card = STS()->AddAnimationComponent(anim_compass_card, 0, 1, mgr_compass_card);
+
+		//Course Pointer
+		static UINT course_pointer[4] = {59, 60, 62, 63};
+		mgr_course_pointer = new MGROUP_ROTATE(GetVCMeshIndex(), course_pointer, 4, _V(-0.617860, 2.060758, 14.703392), _V(0.000000, -0.258858, 0.965914), (float)(RAD * 360));
+		anim_course_pointer = STS()->CreateAnimation(0.0);
+		ach_course_pointer = STS()->AddAnimationComponent(anim_course_pointer, 0, 1, mgr_course_pointer);
+
+		//CDI
+		static UINT hsi_cdi[1] = { 61 };
+		mgr_hsi_cdi = new MGROUP_TRANSLATE(GetVCMeshIndex(), hsi_cdi, 1, _V(-0.015733, 0.0, 0.0) * 2);
+		anim_hsi_cdi = STS()->CreateAnimation(0.5);
+		ach_hsi_cdi = STS()->AddAnimationComponent(anim_hsi_cdi, 0, 1, mgr_hsi_cdi, ach_course_pointer);
+
+		//Primary Bearing
+		static UINT primary_bearing[2] = { 68, 72 };
+		mgr_primary_bearing = new MGROUP_ROTATE(GetVCMeshIndex(), primary_bearing, 2, _V(-0.617860, 2.060758, 14.703392), _V(0.000000, 0.258858, -0.965914), (float)(RAD * 360));
+		anim_primary_bearing = STS()->CreateAnimation(0.0);
+		STS()->AddAnimationComponent(anim_primary_bearing, 0, 1, mgr_primary_bearing);
+
+		//Secondary Bearing
+		static UINT secondary_bearing[2] = { 69, 71 };
+		mgr_secondary_bearing = new MGROUP_ROTATE(GetVCMeshIndex(), secondary_bearing, 2, _V(-0.617860, 2.060758, 14.703392), _V(0.000000, 0.258858, -0.965914), (float)(RAD * 360));
+		anim_secondary_bearing = STS()->CreateAnimation(0.0);
+		STS()->AddAnimationComponent(anim_secondary_bearing, 0, 1, mgr_secondary_bearing);
+
+		//GS Needle
+		static UINT needle_gs[1] = { 89 };
+		mgr_needle_gs = new MGROUP_TRANSLATE(GetVCMeshIndex(), needle_gs, 1, _V(0.0, -0.022808, -0.006334) * 2);
+		anim_needle_gs = STS()->CreateAnimation(0.5);
+		STS()->AddAnimationComponent(anim_needle_gs, 0, 1, mgr_needle_gs);
 	}
 
 	void PanelF6::OnPreStep(double simt, double simdt, double mjd)
@@ -772,6 +808,35 @@ namespace vc {
 			int altAcc = pCDR2->GetIDP()->GetVacc();
 			double limitedAlt = (altAcc < -10.0) ? -10.0 : ((altAcc > 10.0) ? 10.0 : altAcc);
 			STS()->SetAnimation(anim_needle_alt, (limitedAlt + 10.0) / 20.0);
+
+			//HSI
+			//Compass Card
+			double hsiheading, roll, deviation, bearing, course, scale, primaryBearing, secondaryBearing, gsiDeviation;
+			course = STS()->GetYaw();
+			hsiheading = STS()->GetYaw() - pCDR1->GetIDP()->GetTargetHeading();
+			roll = STS()->GetBank();
+			bearing = pCDR1->GetIDP()->GetSelectedRunwayHeading() * RAD;
+			deviation = pCDR1->GetIDP()->GetCourseDeviation() * RAD;
+			scale = pCDR1->GetIDP()->GetCourseDeviationScale();
+			primaryBearing = pCDR1->GetIDP()->GetPrimaryBearing() * RAD;
+			secondaryBearing = pCDR1->GetIDP()->GetSecondaryBearing() * RAD;
+			gsiDeviation = pCDR1->GetIDP()->GetGlideSlopeDeviation();
+
+			double sgn = sign((90 * RAD) - fabs(roll));
+
+			double coursePointer = course - bearing;
+			if (coursePointer >= PI2) coursePointer -= PI2;
+			if (coursePointer < 0) coursePointer += PI2;
+
+			//if (deviation >= PI2) deviation -= PI2;
+			//if (deviation < 0) deviation += PI2;
+
+			STS()->SetAnimation(anim_compass_card, (hsiheading * sgn) / PI2);
+			STS()->SetAnimation(anim_course_pointer, (coursePointer) / PI2);
+			STS()->SetAnimation(anim_hsi_cdi, 0.5 + deviation / (2.0 * scale * RAD));
+			STS()->SetAnimation(anim_primary_bearing, primaryBearing / PI2);
+			STS()->SetAnimation(anim_secondary_bearing, secondaryBearing / PI2);
+			STS()->SetAnimation(anim_needle_gs, (5000.0 - gsiDeviation) / 10000.0);
 		}
 	}
 
