@@ -561,11 +561,12 @@ namespace vc {
 				break;
 			}
 
-			double attRoll = -STS()->GetBank();
+			double attRoll = STS()->GetBank();
 			double attPitch = STS()->GetPitch();
 			double attYaw = STS()->GetSlipAngle();
 
 			if (cos(attRoll) < 0) attYaw = -attYaw;
+			if (cos(attYaw) < 0) attRoll = -attRoll;
 
 			if (attRoll >= PI2) attRoll -= PI2;
 			if (attRoll < 0) attRoll += PI2;
