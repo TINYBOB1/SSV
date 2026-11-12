@@ -409,6 +409,7 @@ class Atlantis: public VESSEL4
 		DEVMESHHANDLE hDevOrbiterMesh;
 		DEVMESHHANDLE hDevOrbiterVCExternalMesh;
 		DEVMESHHANDLE hDevVerticalTailMesh;
+		MESHHANDLE hOrbiterVCMCDMesh;
 
 		SURFHANDLE hOVTexture;
 		SURFHANDLE hLOMSTexture;

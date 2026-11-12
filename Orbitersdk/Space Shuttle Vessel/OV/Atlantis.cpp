@@ -813,6 +813,7 @@ pActiveLatches( 5, NULL ), pXRSound(NULL)
 	hSSMEMesh[0] = NULL;
 	hSSMEMesh[1] = NULL;
 	hSSMEMesh[2] = NULL;
+	hOrbiterVCMCDMesh = oapiLoadMeshGlobal(MESHNAME_VC_MCD);
 
 	ahHDP = NULL;
 	ahTow = NULL;
@@ -3537,8 +3538,16 @@ void Atlantis::AddOrbiterVisual()
 			oapiWriteLog( "(SSV_OV) [INFO] OMS pallet mesh added" );
 		}*/
 
-		mesh_vc = AddMesh(hOrbiterVCMesh, &VC_OFFSET);
-		SetMeshVisibilityMode(mesh_vc, MESHVIS_VC);
+		if (pMission->HasMEDS())
+		{
+			mesh_vc = AddMesh(hOrbiterVCMesh, &VC_OFFSET);
+			SetMeshVisibilityMode(mesh_vc, MESHVIS_VC);
+		}
+		else
+		{
+			mesh_vc = AddMesh(hOrbiterVCMCDMesh, &VC_OFFSET);
+			SetMeshVisibilityMode(mesh_vc, MESHVIS_VC);
+		}
 
 		mesh_middeck = AddMesh(hMidDeckMesh, &VC_OFFSET);
 		//Only make visible when actually inside the mid deck
